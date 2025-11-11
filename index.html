@@ -120,12 +120,12 @@
         <button id="btnSelectMemorize" class="mode-select-button">🎤 قراءة</button> 
     </div>
     <div id="listenModeUI" style="display: none;">
-        <div class="lesson-title-display">le gardien du zoo</div>
+        <div class="lesson-title-display">gardien du zoo</div>
         <audio id="audioPlayerListen"></audio>
         <div class="controls" id="listenControls"><button id="playPauseButtonListen" class="btn-pulsing">▶️</button></div>
     </div>
     <div id="translationModeUI" style="display: none;">
-        <div class="lesson-title-display">le gardien du zoo</div>
+        <div class="lesson-title-display">gardien du zoo</div>
         <audio id="audioPlayerTranslation"></audio>
         <div class="controls" id="translationControls"><button id="playPauseButtonTranslation" class="btn-pulsing">▶️</button></div>
     </div>
@@ -143,7 +143,7 @@
         <div class="memorize-sentence-placeholder"></div>
     </div>
     <div id="syllableModeUI" style="display: none;">
-        <div class="lesson-title-display">le gardien du zoo</div>
+        <div class="lesson-title-display">gardien du zoo</div>
         <div id="syllableWordDisplayContainer"><div id="syllableWordDisplay"></div></div>
         <audio id="audioPlayerSyllableFullWord"></audio><audio id="audioPlayerSyllablePart"></audio>
         <div class="controls" id="syllableNavControls" style="margin-top: 20px;"><button id="prevSyllableWordButton">الكلمة السابقة</button><button id="nextSyllableWordButton">الكلمة التالية</button></div>
@@ -153,7 +153,7 @@
 <script>
     const SCRIPT_READERS_DATA = [
     {
-        "name": "le gardien du zoo",
+        "name": "gardien du zoo",
         "audioFile": "farid.mp3",
         "timerDuration": 60,
         "ayatTimings": [
@@ -618,7 +618,7 @@
     function normalizeFrenchText(text) {
         if (!text) return "";
         return text.trim().toLowerCase()
-            .normalize("NFD").replace(/[̀-ͯ]/g, "")
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
             .replace(/[.,'’/#!$%^&*;:{}=-_~()?]/g, "");
     }
 
@@ -659,29 +659,26 @@
         memorize_recognition.onstart = () => { 
             memorize_isRecognizing = true; 
             memorize_speechButton.textContent = "🔴 الاستماع جارٍ..."; 
-            memorize_speechButton.classList.add('listening'); 
+            memorize_speechButton.classList.add('listening');
+            memorize_speechButton.classList.remove('btn-pulsing');
             memorize_speechStatus.textContent = "تحدث الآن..."; 
             memorize_speechStatus.className = 'speech-status-info'; 
         };
         
         memorize_recognition.onend = () => {
             memorize_isRecognizing = false;
-            if (memorize_shouldBeRecognizing) {
-                try {
-                    memorize_recognition.start();
-                } catch(e) {
-                    console.error("Speech recognition auto-restart failed:", e);
-                    memorize_shouldBeRecognizing = false; 
-                    memorize_speechButton.textContent = "🎤 ابدأ التحدث";
-                    memorize_speechButton.classList.remove('listening');
-                }
+            if (memorize_shouldBeRecognizing && memorize_currentWordIndex < memorize_wordSpans.length) {
+                setTimeout(() => {
+                    if (memorize_shouldBeRecognizing) {
+                       try { memorize_recognition.start(); } catch(e) { console.error("Recognition restart failed", e); }
+                    }
+                }, 100);
             } else {
                  memorize_speechButton.textContent = "🎤 ابدأ التحدث";
                  memorize_speechButton.classList.remove('listening');
-                 if (memorize_currentWordIndex > 0 && memorize_currentWordIndex < memorize_wordSpans.length) {
-                    memorize_speechStatus.textContent = "توقف الاستماع. اضغط للمتابعة.";
-                    memorize_speechStatus.className = 'speech-status-info';
-                }
+                 if (memorize_currentWordIndex < memorize_wordSpans.length) {
+                     memorize_speechButton.classList.add('btn-pulsing');
+                 }
             }
         };
 
@@ -689,21 +686,21 @@
             if (event.error === 'no-speech' && memorize_shouldBeRecognizing) {
                 return; 
             }
+             if (event.error === 'aborted' && memorize_shouldBeRecognizing) {
+                return;
+            }
+            console.error("Speech recognition error:", event.error);
             memorize_speechStatus.textContent = "خطأ في التعرف: " + event.error; 
             memorize_speechStatus.className = 'speech-status-error'; 
         };
 
         memorize_recognition.onresult = (event) => {
             let finalTranscript = '';
-            let interimTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
                     finalTranscript += event.results[i][0].transcript + ' ';
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
                 }
             }
-            if(interimTranscript) memorize_speechStatus.textContent = interimTranscript;
             
             const wordsToProcess = finalTranscript.trim().split(/\s+/).filter(Boolean);
             
@@ -726,18 +723,11 @@
                     memorize_currentWordIndex++;
                     memorize_speechStatus.textContent = "ممتاز! " + targetData.text;
                     memorize_speechStatus.className = 'speech-status-success';
-                } else {
-                    const isRepetition = memorize_currentWordIndex > 0 && [normalizeFrenchText(memorize_wordDataObjects[memorize_currentWordIndex-1].text), ...((memorize_wordDataObjects[memorize_currentWordIndex-1].alternatives || []).map(alt => normalizeFrenchText(alt)))].includes(normalizedSpoken);
-                    if(isRepetition) {
-                        continue; 
-                    }
-                    memorize_speechStatus.textContent = `سمعت "${spokenWord}". حاول مرة أخرى.`;
-                    memorize_speechStatus.className = 'speech-status-error';
-                    break;
                 }
             }
 
             if (memorize_currentWordIndex < memorize_wordSpans.length && memorize_showFirstWordToggle.checked) {
+                memorize_wordSpans.forEach(sp => sp.classList.remove('highlight-active-word'));
                 memorize_wordSpans[memorize_currentWordIndex].classList.add('highlight-active-word');
             }
 
@@ -759,12 +749,12 @@
 
     function memorize_toggleSpeechRecognition() {
         if (!SpeechRecognitionAPI) return;
-        if (memorize_shouldBeRecognizing) {
+        if (memorize_isRecognizing || memorize_shouldBeRecognizing) {
             memorize_shouldBeRecognizing = false;
             memorize_recognition.stop();
             memorize_stopTimer();
         } else {
-            if (memorize_currentWordIndex >= memorize_wordSpans.length || (currentReaderDataForMode.timerDuration > 0 && memorize_timerRemainingSeconds <= 0)) {
+            if (memorize_currentWordIndex >= memorize_wordSpans.length) {
                 memorize_resetActivity();
             }
             try {
@@ -787,9 +777,16 @@
         memorize_stopTimer();
         memorize_currentWordIndex = 0;
         memorize_startTime = null;
-        resetAllWordStyles(memorize_wordSpans);
-        if (memorize_showFirstWordToggle.checked && memorize_wordSpans.length > 0) {
-            memorize_wordSpans[0].classList.add('highlight-active-word');
+        
+        const placeholderSpans = Array.from(memorizeSentencePlaceholder.querySelectorAll('.word-wrapper'));
+        placeholderSpans.forEach(span => {
+            span.classList.remove('highlight-active-word', 'processed-word');
+            const sign = span.querySelector('.correct-sign');
+            if (sign) sign.remove();
+        });
+
+        if (memorize_showFirstWordToggle.checked && placeholderSpans.length > 0) {
+            placeholderSpans[0].classList.add('highlight-active-word');
         }
         memorize_speechStatus.textContent = "اضغط على \"ابدأ\" وتحدث";
         memorize_speechStatus.className = 'speech-status-neutral';
@@ -819,10 +816,9 @@
         memorize_showFirstWordToggle.onchange = () => {
              if (memorize_currentWordIndex < memorize_wordSpans.length) {
                  const currentWord = memorize_wordSpans[memorize_currentWordIndex];
+                 memorize_wordSpans.forEach(sp => sp.classList.remove('highlight-active-word'));
                  if(memorize_showFirstWordToggle.checked && !currentWord.classList.contains('processed-word')) {
                     currentWord.classList.add('highlight-active-word');
-                 } else {
-                    currentWord.classList.remove('highlight-active-word');
                  }
              }
         };
