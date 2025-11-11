@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leçon 1 - استماع و قراءة</title>
+    <title>lecture - استماع و قراءة</title>
     <style>
-        @font-face { font-family: 'HafsFont'; src: url('conv_original-hafs.otf') format('opentype'); }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'HafsFont', 'Amiri', Arial, sans-serif; direction: ltr; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; color: #333; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        html { scroll-padding-top: 40vh; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; direction: ltr; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; color: #333; -webkit-tap-highlight-color: transparent; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         .page-content-wrapper { width: 100%; max-width: 900px; position: relative; z-index: 1; }
         h1.surah-title { font-size: 2.5em; color: white; margin-top: 15px; margin-bottom: 25px; text-align: center; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
         #modeSelector, #listenModeUI, #translationModeUI, #memorizeModeUI, #syllableModeUI, #sentence { background: rgba(255, 255, 255, 0.92); border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
@@ -19,18 +19,18 @@
         #btnSelectMemorize { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
         .mode-select-button:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25); }
         .mode-select-button.active { background: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%) !important; box-shadow: inset 0 3px 7px rgba(0,0,0,0.2), 0 6px 15px rgba(0,0,0,0.2); transform: translateY(1px); }
-        #listenModeUI .reader-select-group, #translationModeUI .reader-select-group, #syllableModeUI .reader-select-group { margin-bottom: 15px; text-align: left; }
-        #listenModeUI label, #translationModeUI label, #syllableModeUI label { font-size: 1em; font-family: Arial, sans-serif; margin-bottom: 5px; display: block; color: #555; }
-        #listenModeUI select, #translationModeUI select, #syllableModeUI select { font-size: 1em; font-family: Arial, sans-serif; padding: 10px; width:100%; border-radius: 8px; border: 1px solid #ddd; background-color: white; }
-        #sentence { font-size: 30px; line-height: 1.8; text-align: left; padding-top: 15px; } 
+        .reader-select-group { margin-bottom: 15px; text-align: center; }
+        .lesson-title-display { text-align: center; font-size: 1.2em; font-weight: bold; color: #333; margin-bottom: 15px; padding: 10px; background-color: #f0f8ff; border-radius: 8px; border: 1px solid #d1e9ff; }
+        #listenModeUI select, #translationModeUI select, #syllableModeUI select { font-size: 1em; padding: 10px; width:100%; max-width: 300px; border-radius: 8px; border: 1px solid #ddd; background-color: white; margin: 0 auto; }
+        #sentence { font-size: clamp(20px, 5.5vw, 30px); line-height: 1.8; text-align: left; padding-top: 15px; } 
         .word-wrapper { display: inline-flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 8px 5px; margin: 0 2px; border-radius: 5px; vertical-align: bottom; transition: all 0.2s ease-in-out; cursor: pointer; position: relative; min-height: 3em; }
-        .word-wrapper .translation-text { display: none; font-family: Arial, sans-serif; font-size: 0.8em; color: red; line-height: 1.2; text-align: center; direction: ltr; margin-bottom: 4px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: normal; max-height: 2.4em; }
+        .word-wrapper .translation-text { display: none; font-family: Arial, sans-serif; font-size: 0.5em; color: red; line-height: 1.2; text-align: center; direction: ltr; margin-bottom: 4px; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: normal; max-height: 2.4em; }
         .page-translation-mode-active .word-wrapper .translation-text { display: block; }
         .word-wrapper .arabic-word { display: block; text-align: center; } 
         .ayah-number { color: #667eea; font-size: 0.75em; margin: 0 5px; display: inline-block; vertical-align: bottom; line-height: 3em; visibility: visible !important; }
         .highlight-active-word { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important; color: #fff !important; transform: scale(1.05); box-shadow: 0 2px 10px rgba(79, 172, 254, 0.3); visibility: visible !important; opacity: 1 !important; }
         .highlight-active-word .arabic-word { color: #fff !important; }
-        .highlight-active-word .translation-text { color: #ffeb3b !important; } 
+        .highlight-active-word .translation-text { color: #ffeb3b !important; font-weight: bold; } 
         .processed-word { background: rgba(79, 172, 254, 0.15) !important; color: #333 !important; transform: none; visibility: visible !important; opacity: 1 !important; }
         .processed-word .arabic-word { color: #333 !important; }
         .processed-word .translation-text { color: darkred !important; }
@@ -51,9 +51,9 @@
         #listenControls #playPauseButtonListen, #translationControls #playPauseButtonTranslation { font-size: 1.3em; padding: 10px 20px; }
         #memorizeTimerDisplay { font-size: 2em; font-weight: bold; color: #333; margin-bottom: 10px; font-family: Arial, sans-serif;}
         #memorizeControls { margin-bottom:10px; } 
-        #showFirstWordToggleDiv { margin-bottom: 15px; font-family: Arial, sans-serif; }
+        #showFirstWordToggleDiv { margin-bottom: 15px; font-family: Arial, sans-serif; text-align:center; }
         #speechStatusMemorize { font-size: 1.6em; padding: 10px 15px; border-radius: 10px; min-height: 2.5em; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; line-height: 1.4; text-align: center; border: 1px solid transparent; width: 100%; box-sizing: border-box; font-family: Arial, sans-serif; }
-        #memorizeModeUI .memorize-sentence-placeholder { width: 100%; min-height:100px; font-size: 30px; line-height: 1.8; text-align: left; padding: 10px; border: 1px solid #eee; background-color: #fcfcfc; border-radius: 8px; }
+        #memorizeModeUI .memorize-sentence-placeholder { width: 100%; min-height:100px; font-size: clamp(20px, 5.5vw, 30px); line-height: 1.8; text-align: left; padding: 10px; border: 1px solid #eee; background-color: #fcfcfc; border-radius: 8px; }
         .speech-status-neutral { background-color: rgba(230, 230, 230, 0.85); color: #333; border-color: #ccc; }
         .speech-status-info { background-color: #e2f3f5; color: #31708f; border-color: #bce8f1; }
         .speech-status-success { background-color: #dff0d8; color: #3c763d; border-color: #d6e9c6; font-weight: bold; }
@@ -72,8 +72,10 @@
         #syllableWordDisplay .syllable-parts-audio-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 15px; margin-bottom: 15px; }
         #syllableWordDisplay .syllable-audio-button { font-family: Arial, sans-serif; font-size: 1.1em; padding: 8px 15px; background-color: #007BFF; color: white; border: none; border-radius: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: all 0.2s; }
         #syllableWordDisplay .syllable-audio-button:hover { background-color: #0056b3; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
-        #syllableWordDisplay .syllable-audio-button .syllable-text-on-button { font-family: 'HafsFont', 'Amiri', Arial, sans-serif; font-size: 1.3em; vertical-align: middle; margin-left: 5px; }
+        #syllableWordDisplay .syllable-audio-button .syllable-text-on-button { font-size: 1.3em; vertical-align: middle; margin-left: 5px; }
         #syllableWordDisplay .syllable-word-translation { font-family: Arial, sans-serif; font-size: 1.1em; color: #a94442; margin-top: 10px; padding: 8px; background-color: rgba(255,255,255,0.6); border-radius: 6px; text-align: center; direction: ltr; }
+        #fullscreenBtn { position: fixed; top: 20px; right: 20px; z-index: 1001; background: white; color: #667eea; border: 2px solid #667eea; border-radius: 50px; width: 45px; height: 45px; font-size: 22px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        #fullscreenBtn:hover { transform: scale(1.1); background-color: #667eea; color: white; }
 
         @media (max-width: 768px) { 
             body { padding: 15px; } .page-content-wrapper { padding: 0; } 
@@ -83,8 +85,7 @@
             .mode-select-button { font-size: 1.1em; padding: 12px 20px; width: 100%; max-width: 280px; margin: 0 auto; } 
             .controls button { font-size: 1em; padding: 10px 18px; min-width: 110px; } 
             #listenControls #playPauseButtonListen, #translationControls #playPauseButtonTranslation { font-size: 1.2em; } 
-            #sentence, #memorizeModeUI .memorize-sentence-placeholder { font-size: 26px; } 
-            .word-wrapper .translation-text { font-size: 0.7em; } .ayah-number { font-size: 0.7em; } 
+            #sentence, #memorizeModeUI .memorize-sentence-placeholder { font-size: 24px; } 
             #memorizeTimerDisplay { font-size: 2em; } 
             #speechStatusMemorize {font-size: 1.4em;} 
             #syllableWordDisplay .syllables-visual-container { font-size: 2em; } 
@@ -98,19 +99,20 @@
             .mode-select-button { font-size: 1em; padding: 10px 15px; } 
             .controls button { font-size: 0.9em; padding: 8px 15px; min-width: auto; } 
             #listenControls #playPauseButtonListen, #translationControls #playPauseButtonTranslation { font-size: 1.1em; } 
-            #sentence, #memorizeModeUI .memorize-sentence-placeholder { font-size: 22px; } 
-            .word-wrapper .translation-text { font-size: 0.65em; } .ayah-number { font-size: 0.65em; } 
+            #sentence, #memorizeModeUI .memorize-sentence-placeholder { font-size: 19px; } 
             #memorizeTimerDisplay { font-size: 1.8em; } 
             #speechStatusMemorize { font-size: 1.2em; padding: 12px 20px; } 
             #syllableWordDisplay .syllables-visual-container { font-size: 1.7em; } 
             #syllableWordDisplay .syllable-audio-button { font-size: 0.9em; padding: 6px 12px; } 
             #syllableWordDisplay .syllable-word-translation { font-size: 0.9em; }
+            #fullscreenBtn { top: 10px; right: 10px; width: 40px; height: 40px; font-size: 20px; }
         }
     </style>
 </head>
 <body class="">
+ <button id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
  <div class="page-content-wrapper">
-    <h1 class="surah-title">Leçon 1</h1>
+    <h1 class="surah-title">lecture</h1>
     <div id="modeSelector">
         <button id="btnSelectListen" class="mode-select-button">🎵 استماع</button>
         <button id="btnSelectTranslation" class="mode-select-button">📖 استماع مع الترجمة</button>
@@ -118,12 +120,12 @@
         <button id="btnSelectMemorize" class="mode-select-button">🎤 قراءة</button> 
     </div>
     <div id="listenModeUI" style="display: none;">
-        <div class="reader-select-group"><label for="readerSelectListen">اختر القارئ:</label><select id="readerSelectListen"></select></div>
+        <div class="lesson-title-display">le gardien du zoo</div>
         <audio id="audioPlayerListen"></audio>
         <div class="controls" id="listenControls"><button id="playPauseButtonListen" class="btn-pulsing">▶️</button></div>
     </div>
     <div id="translationModeUI" style="display: none;">
-        <div class="reader-select-group"><label for="readerSelectTranslation">اختر القارئ:</label><select id="readerSelectTranslation"></select></div>
+        <div class="lesson-title-display">le gardien du zoo</div>
         <audio id="audioPlayerTranslation"></audio>
         <div class="controls" id="translationControls"><button id="playPauseButtonTranslation" class="btn-pulsing">▶️</button></div>
     </div>
@@ -141,7 +143,7 @@
         <div class="memorize-sentence-placeholder"></div>
     </div>
     <div id="syllableModeUI" style="display: none;">
-        <div class="reader-select-group"><label for="readerSelectSyllable">اختر القارئ:</label><select id="readerSelectSyllable"></select></div>
+        <div class="lesson-title-display">le gardien du zoo</div>
         <div id="syllableWordDisplayContainer"><div id="syllableWordDisplay"></div></div>
         <audio id="audioPlayerSyllableFullWord"></audio><audio id="audioPlayerSyllablePart"></audio>
         <div class="controls" id="syllableNavControls" style="margin-top: 20px;"><button id="prevSyllableWordButton">الكلمة السابقة</button><button id="nextSyllableWordButton">الكلمة التالية</button></div>
@@ -151,9 +153,9 @@
 <script>
     const SCRIPT_READERS_DATA = [
     {
-        "name": "الدرس الإفتراضي",
+        "name": "le gardien du zoo",
         "audioFile": "farid.mp3",
-        "timerDuration": 180,
+        "timerDuration": 60,
         "ayatTimings": [
             {
                 "type": "word",
@@ -169,13 +171,7 @@
                 "type": "word",
                 "text": "Farid",
                 "time": "0.91",
-                "translation": "فريد"
-            },
-            {
-                "type": "word",
-                "text": "ne",
-                "time": "1.21",
-                "translation": "لا",
+                "translation": "فريد",
                 "isSyllableLectureEnabled": true,
                 "fullWordAudio": "farid.mp3",
                 "syllables": [
@@ -191,32 +187,29 @@
             },
             {
                 "type": "word",
-                "text": "peut",
-                "time": "1.43",
-                "translation": "يستطيع",
-                "alternatives": [
-                    "peu",
-                    "pe"
-                ],
+                "text": "ne",
+                "time": "1.21",
+                "translation": "لا",
                 "isSyllableLectureEnabled": true,
                 "fullWordAudio": "farid.mp3",
                 "syllables": [
                     {
-                        "text": "peut",
+                        "text": "ne",
                         "audio": "farid.mp3"
                     }
                 ]
             },
             {
                 "type": "word",
+                "text": "peut",
+                "time": "1.43",
+                "translation": "يستطيع"
+            },
+            {
+                "type": "word",
                 "text": "pas",
                 "time": "1.65",
-                "translation": "لا",
-                "alternatives": [
-                    "pa",
-                    "PA",
-                    "Pa"
-                ]
+                "translation": "لا"
             },
             {
                 "type": "word",
@@ -228,10 +221,7 @@
                 "type": "word",
                 "text": "à",
                 "time": "2.13",
-                "translation": "إلى",
-                "alternatives": [
-                    "a"
-                ]
+                "translation": "إلى"
             },
             {
                 "type": "word",
@@ -271,10 +261,7 @@
                 "type": "word",
                 "text": "à",
                 "time": "4.31",
-                "translation": "في",
-                "alternatives": [
-                    "a"
-                ]
+                "translation": "في"
             },
             {
                 "type": "word",
@@ -290,19 +277,13 @@
                 "type": "word",
                 "text": "les",
                 "time": "5.73",
-                "translation": "الـ",
-                "alternatives": [
-                    "lé"
-                ]
+                "translation": "الـ"
             },
             {
                 "type": "word",
                 "text": "enfants",
                 "time": "6.05",
-                "translation": "الأطفال",
-                "alternatives": [
-                    "enfant"
-                ]
+                "translation": "الأطفال"
             },
             {
                 "type": "word",
@@ -320,12 +301,7 @@
                 "type": "word",
                 "text": "ont",
                 "time": "7.24",
-                "translation": "لديهم",
-                "alternatives": [
-                    "en",
-                    "on",
-                    "an"
-                ]
+                "translation": "لديهم"
             },
             {
                 "type": "word",
@@ -383,19 +359,13 @@
                 "type": "word",
                 "text": "pâte",
                 "time": "11.15",
-                "translation": "عجينة",
-                "alternatives": [
-                    "pate"
-                ]
+                "translation": "عجينة"
             },
             {
                 "type": "word",
                 "text": "à",
                 "time": "11.34",
-                "translation": "لـِ",
-                "alternatives": [
-                    "a"
-                ]
+                "translation": "لـِ"
             },
             {
                 "type": "word",
@@ -407,10 +377,7 @@
                 "type": "word",
                 "text": "et",
                 "time": "12.33",
-                "translation": "و",
-                "alternatives": [
-                    "é"
-                ]
+                "translation": "و"
             },
             {
                 "type": "word",
@@ -428,10 +395,7 @@
                 "type": "word",
                 "text": "d'images",
                 "time": "13.4",
-                "translation": "صور",
-                "alternatives": [
-                    "d'image"
-                ]
+                "translation": "صور"
             },
             {
                 "type": "word",
@@ -452,6 +416,7 @@
         ]
     }
 ];
+    const isSingleLesson = SCRIPT_READERS_DATA.length === 1;
     const bodyElement = document.body;
     const btnSelectListen = document.getElementById('btnSelectListen');
     const btnSelectTranslation = document.getElementById('btnSelectTranslation');
@@ -469,14 +434,17 @@
     let allWordSpansShared = [], timedWordsForHighlight = [];
     let currentActiveMode = null;
     let currentReaderDataForMode = null; 
+    let lastScrolledWord = null;
 
-    SCRIPT_READERS_DATA.forEach((reader, index) => {
-        const option = document.createElement('option');
-        option.value = index; option.textContent = reader.name;
-        readerSelectListen.appendChild(option.cloneNode(true));
-        readerSelectTranslation.appendChild(option.cloneNode(true));
-        readerSelectSyllable.appendChild(option.cloneNode(true));
-    });
+    if (!isSingleLesson) {
+        SCRIPT_READERS_DATA.forEach((reader, index) => {
+            const option = document.createElement('option');
+            option.value = index; option.textContent = reader.name;
+            if(readerSelectListen) readerSelectListen.appendChild(option.cloneNode(true));
+            if(readerSelectTranslation) readerSelectTranslation.appendChild(option.cloneNode(true));
+            if(readerSelectSyllable) readerSelectSyllable.appendChild(option.cloneNode(true));
+        });
+    }
 
     function generateSentenceSpans(readerData) {
         sentenceContainerShared.innerHTML = ''; 
@@ -515,6 +483,7 @@
             const sign = span.querySelector('.correct-sign');
             if (sign) sign.remove();
         });
+        lastScrolledWord = null;
     }
 
     const audioPlayerListen = document.getElementById("audioPlayerListen");
@@ -527,13 +496,20 @@
     function common_highlightWords(audioPlayer, wordWrappersArray, isPaused, audioWasEnded) {
         if (isPaused || audioWasEnded) return; 
         const currentTime = audioPlayer.currentTime;
+        let activeWordFound = false;
         wordWrappersArray.forEach((wrapper, index) => {
             let wordTime = parseFloat(wrapper.dataset.time);
             let nextWrapper = wordWrappersArray.find((w, i) => i > index && w.dataset.time);
             let endTime = nextWrapper ? parseFloat(nextWrapper.dataset.time) : (audioPlayer.duration || Infinity);
-            if (currentTime >= wordTime && currentTime < endTime) {
+
+            if (!activeWordFound && currentTime >= wordTime && currentTime < endTime) {
+                activeWordFound = true;
                 wrapper.classList.add("highlight-active-word");
                 wrapper.classList.remove("processed-word");
+                if(wrapper !== lastScrolledWord){
+                    wrapper.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                    lastScrolledWord = wrapper;
+                }
             } else {
                 wrapper.classList.remove("highlight-active-word");
                 if (currentTime >= endTime) wrapper.classList.add("processed-word");
@@ -549,7 +525,8 @@
         
         currentReaderDataForMode = SCRIPT_READERS_DATA[readerIndex];
         if (!currentReaderDataForMode) return;
-
+        
+        lastScrolledWord = null;
         audioPlayer.src = currentReaderDataForMode.audioFile;
         audioPlayer.currentTime = 0;
         audioPlayer.pause();
@@ -605,8 +582,12 @@
         listenModeUI.style.display = 'block'; 
         sentenceContainerShared.style.display = 'block';
         bodyElement.classList.remove('page-translation-mode-active');
-        setupAudioMode('listen', readerSelectListen.value || 0);
-        readerSelectListen.onchange = (e) => setupAudioMode('listen', e.target.value);
+        if (isSingleLesson) {
+            setupAudioMode('listen', 0);
+        } else {
+            setupAudioMode('listen', readerSelectListen.value || 0);
+            readerSelectListen.onchange = (e) => setupAudioMode('listen', e.target.value);
+        }
     }
     function deactivateListenMode() { if (!audioPlayerListen.paused) audioPlayerListen.pause(); listenModeUI.style.display = 'none'; }
     
@@ -614,8 +595,12 @@
         translationModeUI.style.display = 'block'; 
         sentenceContainerShared.style.display = 'block';
         bodyElement.classList.add('page-translation-mode-active');
-        setupAudioMode('translation', readerSelectTranslation.value || 0);
-        readerSelectTranslation.onchange = (e) => setupAudioMode('translation', e.target.value);
+        if (isSingleLesson) {
+            setupAudioMode('translation', 0);
+        } else {
+            setupAudioMode('translation', readerSelectTranslation.value || 0);
+            readerSelectTranslation.onchange = (e) => setupAudioMode('translation', e.target.value);
+        }
     }
     function deactivateTranslationMode() { if (!audioPlayerTranslation.paused) audioPlayerTranslation.pause(); translationModeUI.style.display = 'none'; }
     
@@ -625,7 +610,7 @@
     const memorize_showFirstWordToggle = document.getElementById('showFirstWordToggle');
     const memorize_speechStatus = document.getElementById("speechStatusMemorize");
     
-    let memorize_currentWordIndex = 0, memorize_isRecognizing = false;
+    let memorize_currentWordIndex = 0, memorize_isRecognizing = false, memorize_shouldBeRecognizing = false;
     let memorize_recognition;
     let memorize_timerIntervalId = null, memorize_timerRemainingSeconds = 0, memorize_startTime = null;
     let memorize_wordSpans = [], memorize_wordDataObjects = [];
@@ -633,8 +618,8 @@
     function normalizeFrenchText(text) {
         if (!text) return "";
         return text.trim().toLowerCase()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            .replace(/[.,'’\/#!$%\^&\*;:{}=\-_\`~()?]/g, "");
+            .normalize("NFD").replace(/[̀-ͯ]/g, "")
+            .replace(/[.,'’/#!$%^&*;:{}=-_~()?]/g, "");
     }
 
     function triggerConfettiEffect() { const c=100;for(let i=0;i<c;i++){const e=document.createElement("div");e.classList.add("confetti"),e.style.left=100*Math.random()+"vw",e.style.backgroundColor=["#f44336","#e91e63","#9c27b0","#673ab7","#3f51b5","#2196f3","#03a9f4","#00bcd4","#009688","#4CAF50","#8BC34A","#CDDC39","#FFEB3B","#FFC107","#FF9800"][Math.floor(15*Math.random())],e.style.animationDelay=.5*Math.random()+"s",document.body.appendChild(e),setTimeout(()=>{e.remove()},3500)}}
@@ -657,6 +642,7 @@
                 clearInterval(memorize_timerIntervalId);
                 memorize_speechStatus.textContent = "الوقت انتهى! اضغط لإعادة التعيين.";
                 memorize_speechStatus.className = 'speech-status-error';
+                memorize_shouldBeRecognizing = false;
                 if (memorize_isRecognizing) memorize_recognition.stop();
             }
         }, 1000);
@@ -670,9 +656,42 @@
         memorize_recognition.interimResults = true;
         memorize_recognition.lang = 'fr-FR';
 
-        memorize_recognition.onstart = () => { memorize_isRecognizing = true; memorize_speechButton.textContent = "🔴 الاستماع جارٍ..."; memorize_speechButton.classList.add('listening'); memorize_speechStatus.textContent = "تحدث الآن..."; memorize_speechStatus.className = 'speech-status-info'; };
-        memorize_recognition.onend = () => { memorize_isRecognizing = false; memorize_speechButton.textContent = "🎤 ابدأ التحدث"; memorize_speechButton.classList.remove('listening'); if (memorize_currentWordIndex > 0 && memorize_currentWordIndex < memorize_wordSpans.length) { memorize_speechStatus.textContent = "توقف الاستماع. اضغط للمتابعة."; memorize_speechStatus.className = 'speech-status-info'; } };
-        memorize_recognition.onerror = (event) => { memorize_speechStatus.textContent = "خطأ في التعرف: " + event.error; memorize_speechStatus.className = 'speech-status-error'; };
+        memorize_recognition.onstart = () => { 
+            memorize_isRecognizing = true; 
+            memorize_speechButton.textContent = "🔴 الاستماع جارٍ..."; 
+            memorize_speechButton.classList.add('listening'); 
+            memorize_speechStatus.textContent = "تحدث الآن..."; 
+            memorize_speechStatus.className = 'speech-status-info'; 
+        };
+        
+        memorize_recognition.onend = () => {
+            memorize_isRecognizing = false;
+            if (memorize_shouldBeRecognizing) {
+                try {
+                    memorize_recognition.start();
+                } catch(e) {
+                    console.error("Speech recognition auto-restart failed:", e);
+                    memorize_shouldBeRecognizing = false; 
+                    memorize_speechButton.textContent = "🎤 ابدأ التحدث";
+                    memorize_speechButton.classList.remove('listening');
+                }
+            } else {
+                 memorize_speechButton.textContent = "🎤 ابدأ التحدث";
+                 memorize_speechButton.classList.remove('listening');
+                 if (memorize_currentWordIndex > 0 && memorize_currentWordIndex < memorize_wordSpans.length) {
+                    memorize_speechStatus.textContent = "توقف الاستماع. اضغط للمتابعة.";
+                    memorize_speechStatus.className = 'speech-status-info';
+                }
+            }
+        };
+
+        memorize_recognition.onerror = (event) => { 
+            if (event.error === 'no-speech' && memorize_shouldBeRecognizing) {
+                return; 
+            }
+            memorize_speechStatus.textContent = "خطأ في التعرف: " + event.error; 
+            memorize_speechStatus.className = 'speech-status-error'; 
+        };
 
         memorize_recognition.onresult = (event) => {
             let finalTranscript = '';
@@ -723,6 +742,7 @@
             }
 
             if (memorize_currentWordIndex >= memorize_wordSpans.length) {
+                memorize_shouldBeRecognizing = false;
                 memorize_stopTimer();
                 let timeSpentMsg = "";
                 if (memorize_startTime) {
@@ -739,7 +759,8 @@
 
     function memorize_toggleSpeechRecognition() {
         if (!SpeechRecognitionAPI) return;
-        if (memorize_isRecognizing) {
+        if (memorize_shouldBeRecognizing) {
+            memorize_shouldBeRecognizing = false;
             memorize_recognition.stop();
             memorize_stopTimer();
         } else {
@@ -747,9 +768,11 @@
                 memorize_resetActivity();
             }
             try {
+                memorize_shouldBeRecognizing = true;
                 memorize_recognition.start();
                 memorize_startTimer();
             } catch(e) {
+                memorize_shouldBeRecognizing = false;
                 memorize_speechStatus.textContent = "خطأ في بدء التعرف.";
                 memorize_speechStatus.className = 'speech-status-error';
             }
@@ -757,6 +780,10 @@
     }
     
     function memorize_resetActivity() {
+        memorize_shouldBeRecognizing = false;
+        if (SpeechRecognitionAPI && memorize_isRecognizing) {
+            memorize_recognition.stop();
+        }
         memorize_stopTimer();
         memorize_currentWordIndex = 0;
         memorize_startTime = null;
@@ -774,7 +801,8 @@
         sentenceContainerShared.style.display = 'none';
         memorizeSentencePlaceholder.classList.add('memorize-mode-active');
         
-        currentReaderDataForMode = SCRIPT_READERS_DATA[readerSelectListen.value || 0];
+        const readerIndex = isSingleLesson ? 0 : (readerSelectListen.value || 0);
+        currentReaderDataForMode = SCRIPT_READERS_DATA[readerIndex];
         if (!currentReaderDataForMode) return;
         
         generateSentenceSpans(currentReaderDataForMode);
@@ -799,7 +827,12 @@
              }
         };
     }
-    function deactivateMemorizeMode() { if (SpeechRecognitionAPI && memorize_isRecognizing) memorize_recognition.stop(); memorize_stopTimer(); memorizeModeUI.style.display = 'none'; }
+    function deactivateMemorizeMode() { 
+        memorize_shouldBeRecognizing = false;
+        if (SpeechRecognitionAPI && memorize_isRecognizing) memorize_recognition.stop(); 
+        memorize_stopTimer(); 
+        memorizeModeUI.style.display = 'none'; 
+    }
     
     const syllableWordDisplay = document.getElementById('syllableWordDisplay');
     const audioPlayerSyllableFullWord = document.getElementById('audioPlayerSyllableFullWord');
@@ -868,21 +901,37 @@
         nextSyllableWordButton.disabled = syllable_currentWordIndex >= syllable_lectureWords.length - 1;
     }
     
-    function initSyllableMode() {
-        syllableModeUI.style.display = 'block';
-        const readerIndex = readerSelectSyllable.value || 0;
+    function setupSyllableModeForReader(readerIndex) {
         currentReaderDataForMode = SCRIPT_READERS_DATA[readerIndex];
         syllable_lectureWords = (currentReaderDataForMode.ayatTimings || []).filter(item => item.isSyllableLectureEnabled);
         syllable_currentWordIndex = 0;
         syllable_displayCurrentWord();
-        readerSelectSyllable.onchange = (e) => {
-            currentReaderDataForMode = SCRIPT_READERS_DATA[e.target.value];
-            syllable_lectureWords = (currentReaderDataForMode.ayatTimings || []).filter(item => item.isSyllableLectureEnabled);
-            syllable_currentWordIndex = 0;
-            syllable_displayCurrentWord();
+    }
+
+    function initSyllableMode() {
+        syllableModeUI.style.display = 'block';
+        if (isSingleLesson) {
+            setupSyllableModeForReader(0);
+        } else {
+            setupSyllableModeForReader(readerSelectSyllable.value || 0);
+            readerSelectSyllable.onchange = (e) => setupSyllableModeForReader(e.target.value);
+        }
+        prevSyllableWordButton.onclick = () => { 
+            audioPlayerSyllableFullWord.pause(); 
+            audioPlayerSyllablePart.pause();
+            if (syllable_currentWordIndex > 0) { 
+                syllable_currentWordIndex--; 
+                syllable_displayCurrentWord(); 
+            } 
         };
-        prevSyllableWordButton.onclick = () => { if (syllable_currentWordIndex > 0) { syllable_currentWordIndex--; syllable_displayCurrentWord(); } };
-        nextSyllableWordButton.onclick = () => { if (syllable_currentWordIndex < syllable_lectureWords.length - 1) { syllable_currentWordIndex++; syllable_displayCurrentWord(); } };
+        nextSyllableWordButton.onclick = () => { 
+            audioPlayerSyllableFullWord.pause(); 
+            audioPlayerSyllablePart.pause();
+            if (syllable_currentWordIndex < syllable_lectureWords.length - 1) { 
+                syllable_currentWordIndex++; 
+                syllable_displayCurrentWord(); 
+            } 
+        };
     }
     function deactivateSyllableMode() {
         audioPlayerSyllableFullWord.pause();
@@ -910,11 +959,24 @@
         else if (mode === 'syllable') { initSyllableMode(); btnSelectSyllable.classList.add('active'); }
         else if (mode === 'memorize') { initMemorizeMode(); btnSelectMemorize.classList.add('active'); }
     }
+
+    function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
     
     btnSelectListen.addEventListener('click', () => switchToMode('listen'));
     btnSelectTranslation.addEventListener('click', () => switchToMode('translation'));
     btnSelectSyllable.addEventListener('click', () => switchToMode('syllable'));
     btnSelectMemorize.addEventListener('click', () => switchToMode('memorize'));
+    document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
     if (SCRIPT_READERS_DATA && SCRIPT_READERS_DATA.length > 0) {
         switchToMode('listen');
